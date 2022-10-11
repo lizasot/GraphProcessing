@@ -128,10 +128,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="edge.cpp" />
+    <ClCompile Include="graph.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="sorting_graph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="edge.h" />
+    <ClInclude Include="graph.h" />
+    <ClInclude Include="sorting_graph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
