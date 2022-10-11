@@ -3,11 +3,11 @@
 
 struct edge
 {
-	size_t first; //первая вершина всегда меньше второй и не равна ей
-	size_t second;
+	size_t minVertex;
+	size_t maxVertex;
 	int size;
 };
 
-void swapVertex(size_t& frst, size_t& scnd);
+void swapVertex(size_t& first, size_t& second);
 
-edge* createEdge(size_t frst, size_t scnd, int s);
+edge* createEdge(size_t first, size_t second, int size);

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void outputEdgeList(vector<edge>& graph);
+string getEdgeList(vector<edge>& graph);
 
 bool compareSize(edge item1, edge item2);
 
@@ -16,7 +16,7 @@ void outputGraph(vector<edge>& graph, size_t N);
 
 bool connectivity(vector<edge>& graph, size_t& N);
 
-bool delEdge(vector<edge>& graph, size_t first, size_t second);
+bool delEdge(vector<edge>& graph, size_t minVertex, size_t maxVertex);
 
 void endInputEdge(char& sw);
 

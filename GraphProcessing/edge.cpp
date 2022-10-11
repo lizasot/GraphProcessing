@@ -1,22 +1,22 @@
 #include "edge.h"
 
-void swapVertex(size_t& frst, size_t& scnd)
+void swapVertex(size_t& first, size_t& second)
 {
-	if (frst < scnd) { return; } //если первая вершина меньше второй - всё ок
-	size_t c = frst;
-	frst = scnd;
-	scnd = c;
+	if (first < second) { return; } //если первая вершина меньше второй - всё ок
+	size_t c = first;
+	first = second;
+	second = c;
 }
 
-edge* createEdge(size_t frst, size_t scnd, int s)
+edge* createEdge(size_t first, size_t second, int size)
 {
-	if (frst == 0 || scnd == 0 || s == 0)
+	if (first == 0 || second == 0 || size == 0)
 	{
 		return NULL;
 	}
 	edge* newEdge = new edge;
-	newEdge->first = frst;
-	newEdge->second = scnd;
-	newEdge->size = s;
+	newEdge->minVertex = first;
+	newEdge->maxVertex = second;
+	newEdge->size = size;
 	return newEdge;
 }

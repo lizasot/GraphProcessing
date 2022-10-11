@@ -13,15 +13,15 @@ using namespace std;
 int main()
 {
 	setlocale(0, "");
-	vector<edge> graph(NULL); //список рёбер графа
-	size_t N = 0; //количество вершин графа
+	vector<edge> graph(NULL);
+	size_t countVertices = 0;
 
-	bool doesMenuContinue = true; //выход из меню
-	bool doesSubMenuContinue = false; //выход из подменю
+	bool doesMenuContinue = true;
+	bool doesSubMenuContinue = false;
 	do {
 		//system("cls");
-		char sw = ' '; //переключатель главного меню
-		char sw1 = ' '; //переключатель саб-меню
+		char switchMenu = ' ';
+		char switchSubMenu = ' ';
 		cout << "\nВыберите нужный раздел: \n";
 		cout << "\x1b[32m[1]\x1b[0m Ввести новый граф\n";
 		cout << "\x1b[32m[2]\x1b[0m Сортировка рёбер\n";
@@ -31,43 +31,43 @@ int main()
 		cout << "\x1b[32m[0]\x1b[0m Закрыть программу\n";
 		cout << "Пожалуйста, введите число, чтобы выполнить нужное действие: ";
 
-		cin >> sw;
-		while (cin.get() != '\n') { sw = ' '; }; //если строка содержит более одного символа, возвращается ошибка
+		cin >> switchMenu;
+		while (cin.get() != '\n') { switchMenu = ' '; };
 
-		switch (sw)
+		switch (switchMenu)
 		{
 
 		case '1': //[1] Ввести новый граф
 			do {
 				doesSubMenuContinue = false;
-				sw1 = ' ';
+				switchSubMenu = ' ';
 				cout << "\n\x1b[32m[1]\x1b[0m Ввести граф самостоятельно\n";
 				cout << "\x1b[32m[2]\x1b[0m Ввести количество вершин и соединить их случайно\n";
 				cout << "\x1b[32m[3]\x1b[0m Считать граф с файла\n";
 				cout << "\x1b[32m[0]\x1b[0m Вернуться назад\n";
 				cout << "Пожалуйста, введите число, чтобы выполнить нужное действие: ";
 
-				cin >> sw1;
-				while (cin.get() != '\n') { sw1 = ' '; };
+				cin >> switchSubMenu;
+				while (cin.get() != '\n') { switchSubMenu = ' '; };
 
-				switch (sw1)
+				switch (switchSubMenu)
 				{
 				case '1': //[1] Ввести граф самостоятельно
-					if (!graph.empty()) { graph.clear(); N = 0; }
-					inputUser(graph, N);
+					if (!graph.empty()) { graph.clear(); countVertices = 0; }
+					inputUser(graph, countVertices);
 					break;
 				case '2': //[2] Ввести количество вершин и соединить их случайно
-					generateGraphNew(graph, N);
+					generateGraphNew(graph, countVertices);
 					break;
 				case '3': //[3] Считать граф с файла
-					if (!graph.empty()) { graph.clear(); N = 0; }
-					inputFile(graph, N);
+					if (!graph.empty()) { graph.clear(); countVertices = 0; }
+					inputFile(graph, countVertices);
 					break;
 				case '0': //[0] Назад
 					break;
 				default:
 					cout << "Ошибка! Пожалуйста, попробуйте снова\n";
-					doesSubMenuContinue = true; //цикл пойдёт заново
+					doesSubMenuContinue = true;
 					break;
 				}
 			} while (doesSubMenuContinue);
@@ -76,17 +76,17 @@ int main()
 		case '2': //[2] Сортировка рёбер
 			do {
 				doesSubMenuContinue = false;
-				sw1 = ' ';
+				switchSubMenu = ' ';
 				cout << "\n\x1b[32m[1]\x1b[0m Сортировать граф по весу рёбер\n";
 				cout << "\x1b[32m[2]\x1b[0m Сортировать граф по вершинам\n";
 				cout << "\x1b[32m[3]\x1b[0m Сравнение различных сортировок по скорости\n";
 				cout << "\x1b[32m[0]\x1b[0m Вернуться назад\n";
 				cout << "Пожалуйста, введите число, чтобы выполнить нужное действие: ";
 
-				cin >> sw1;
-				while (cin.get() != '\n') { sw1 = ' '; };
+				cin >> switchSubMenu;
+				while (cin.get() != '\n') { switchSubMenu = ' '; };
 
-				switch (sw1)
+				switch (switchSubMenu)
 				{
 				case '1': //[1] Сортировать рёбра по весу
 					if (!graph.empty()) { vectorSizeSort(graph); }
@@ -97,14 +97,14 @@ int main()
 					else { cout << "Ошибка! Создайте граф, прежде чем сортировать его.\n"; }
 					break;
 				case '3': //[3] Сравнение различных сортировок по скорости
-					if (!graph.empty()) { compareSort(graph, N); }
+					if (!graph.empty()) { compareSort(graph, countVertices); }
 					else { cout << "Ошибка! Создайте граф, прежде чем сортировать его.\n"; }
 					break;
 				case '0': //[0] Назад
 					break;
 				default:
 					cout << "Ошибка! Пожалуйста, попробуйте снова\n";
-					doesSubMenuContinue = true; //цикл пойдёт заново
+					doesSubMenuContinue = true;
 					break;
 				}
 			} while (doesSubMenuContinue);
@@ -113,61 +113,58 @@ int main()
 		case '3': //[3] Поиск минимального остовного дерева
 			do {
 				doesSubMenuContinue = false;
-				sw1 = ' ';
+				switchSubMenu = ' ';
 				cout << "\n\x1b[32m[1]\x1b[0m Найти минимальное остовное дерево и сохранить его\n";
 				cout << "\x1b[32m[2]\x1b[0m Определить время нахождения минимального остовного дерева без сохранения\n";
 				cout << "\x1b[32m[0]\x1b[0m Вернуться назад\n";
 				cout << "Пожалуйста, введите число, чтобы выполнить нужное действие: ";
 
-				cin >> sw1;
-				while (cin.get() != '\n') { sw1 = ' '; };
+				cin >> switchSubMenu;
+				while (cin.get() != '\n') { switchSubMenu = ' '; };
 
-				switch (sw1)
+				switch (switchSubMenu)
 				{
 				case '1': //[1] Найти минимальное остовное дерево и сохранить его
 					if (!graph.empty())
 					{
-						searchTree(graph, N);
+						searchTree(graph, countVertices);
 						cout << "Минимальное остовное дерево: \n";
-						outputGraph(graph, N);
+						outputGraph(graph, countVertices);
 					}
 					else { cout << "Ошибка! Граф пуст.\n"; }
 					break;
 				case '2': //[2] Определить время нахождения
-					if (!graph.empty()) { searchTreeTime(graph, N); }
+					if (!graph.empty()) { searchTreeTime(graph, countVertices); }
 					else { cout << "Ошибка! Граф пуст.\n"; }
 					break;
 				case '0': //[0] Назад
 					break;
 				default:
 					cout << "Ошибка! Пожалуйста, попробуйте снова\n";
-					doesSubMenuContinue = true; //цикл пойдёт заново
+					doesSubMenuContinue = true;
 					break;
 				}
 			} while (doesSubMenuContinue);
 			break;
 
 		case '4': //[4] Вывести список рёбер
-			if (!graph.empty()) { outputEdgeList(graph); }
+			if (!graph.empty()) { getEdgeList(graph); }
 			else { cout << "Ошибка! Граф пуст.\n"; }
 			break;
 
 		case '5': //[5] Вывод текущего графа
-			if (!graph.empty()) { outputGraph(graph, N); }
+			if (!graph.empty()) { outputGraph(graph, countVertices); }
 			else { cout << "Ошибка! Граф пуст.\n"; }
 			break;
 
 		case '0': //[0] Закрыть программу
 			cout << "Выход из программы...\n";
-			doesMenuContinue = false; //выход из цикла
+			doesMenuContinue = false;
 			break;
-		default: //в случае, если введено что-то иное
+		default:
 			cout << "Ошибка! Пожалуйста, попробуйте снова\n";
 			break;
 		}
-
 	} while (doesMenuContinue);
-
 	return 0;
-
 }

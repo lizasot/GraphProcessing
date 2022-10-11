@@ -80,8 +80,8 @@ void shakerSizeSort(vector<edge>& graph)
 bool compareVert(edge item1, edge item2)
 {
 	size_t vertex1, vertex2;
-	vertex1 = item1.first * 10 + item1.second;
-	vertex2 = item2.first * 10 + item2.second;
+	vertex1 = item1.minVertex * 10 + item1.maxVertex;
+	vertex2 = item2.minVertex * 10 + item2.maxVertex;
 	return (vertex1 < vertex2);
 }
 
@@ -98,7 +98,7 @@ void bubbleVertSort(vector<edge>& graph)
 	edge tmp;
 	for (iter = graph.begin(); iter < graph.end(); iter++) {
 		for (jter = (graph.end() - 1); jter >= (iter + 1); jter--) {
-			if ((jter->first * 10 + jter->second) < ((jter - 1)->first * 10 + (jter - 1)->second)) {
+			if ((jter->minVertex * 10 + jter->maxVertex) < ((jter - 1)->minVertex * 10 + (jter - 1)->maxVertex)) {
 				tmp = *jter;
 				*jter = *(jter - 1);
 				*(jter - 1) = tmp;
@@ -116,7 +116,7 @@ void insertVertSort(vector<edge>& graph)
 	for (jter = (graph.begin() + 1); jter < graph.end(); jter++) {
 		key = *jter;
 		iter = jter - 1;
-		while (iter >= graph.begin() && ((iter->first * 10 + iter->second) > (key.first * 10 + key.second))) {
+		while (iter >= graph.begin() && ((iter->minVertex * 10 + iter->maxVertex) > (key.minVertex * 10 + key.maxVertex))) {
 			*(iter + 1) = *iter;
 			*(iter) = key;
 			if (iter != graph.begin()) { iter--; }
@@ -136,7 +136,7 @@ void shakerVertSort(vector<edge>& graph)
 	{
 		for (iter = right; iter > left; iter--)
 		{
-			if (((iter - 1)->first * 10 + (iter - 1)->second) > (iter->first * 10 + iter->second))
+			if (((iter - 1)->minVertex * 10 + (iter - 1)->maxVertex) > (iter->minVertex * 10 + iter->maxVertex))
 			{
 				tmp = *iter;
 				*iter = *(iter - 1);
@@ -146,7 +146,7 @@ void shakerVertSort(vector<edge>& graph)
 		left++;
 		for (iter = left; iter < right; iter++)
 		{
-			if ((iter->first * 10 + iter->second) > ((iter + 1)->first * 10 + (iter + 1)->second))
+			if ((iter->minVertex * 10 + iter->maxVertex) > ((iter + 1)->minVertex * 10 + (iter + 1)->maxVertex))
 			{
 				tmp = *iter;
 				*iter = *(iter + 1);

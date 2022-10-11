@@ -1,16 +1,18 @@
 #include "graph.h"
 
-void outputEdgeList(vector<edge>& graph)
+string getEdgeList(vector<edge>& graph)
 {
-	if (graph.empty()) { cout << "Список рёбер пуст\n"; return; }
+	string str;
+	if (graph.empty()) { str = "Список рёбер пуст.\n"; }
 	vector<edge>::iterator iter = graph.begin(); //итератор, который перебирает весь список
 	size_t i = 0;
 	do
 	{
-		cout << i + 1 << ". Ребро между " << iter->first << " и " << iter->second << " имеет вес " << iter->size << "\n";
+		str += i + 1 + ". Ребро между " + iter->minVertex + " и " + iter->maxVertex + " имеет вес " + iter->size + ".\n";
 		i++;
 		++iter;
 	} while (iter != graph.end());
+	return str;
 }
 
 bool compareSize(edge item1, edge item2)
@@ -44,15 +46,15 @@ void outputGraph(vector<edge>& graph, size_t N)
 	vector<edge>::iterator iter = graph.begin();
 	do
 	{
-		if (Arr[iter->first - 1][iter->second - 1] != 0) //если записываемое ребро уже встречалось - ошибка
+		if (Arr[iter->minVertex - 1][iter->maxVertex - 1] != 0) //если записываемое ребро уже встречалось - ошибка
 		{
 			char sw = '\0'; //для команды пользователя
 			bool check = true; //для выхода из меню с удалением
 			vector<edge>::iterator del = graph.begin(); //итератор, ссылающийся на удаляемое ребро
 			do
 			{
-				cout << "Встречены повторяющиеся рёбра между вершинами " << iter->first << " и " << iter->second << ". Какое значение удалить?\n";
-				cout << "\x1b[32m[1]\x1b[0m " << Arr[iter->first - 1][iter->second - 1] << "\n"; //значение старого ребра
+				cout << "Встречены повторяющиеся рёбра между вершинами " << iter->minVertex << " и " << iter->maxVertex << ". Какое значение удалить?\n";
+				cout << "\x1b[32m[1]\x1b[0m " << Arr[iter->minVertex - 1][iter->maxVertex - 1] << "\n"; //значение старого ребра
 				cout << "\x1b[32m[2]\x1b[0m " << iter->size << "\n"; //значение нового ребра
 
 				cin >> sw;
@@ -61,25 +63,25 @@ void outputGraph(vector<edge>& graph, size_t N)
 				{
 				case '1':
 				{
-					while ((del->first != iter->first) && (del->second != iter->second)) //пока не найден первый элемент с нужными координатами
+					while ((del->minVertex != iter->minVertex) && (del->maxVertex != iter->maxVertex)) //пока не найден первый элемент с нужными координатами
 					{
 						++del;
 					} //итератор, указывающий на старое ребро
 					del->size = iter->size; //"удаляемое" ребро присваивает значение нового
-					Arr[iter->first - 1][iter->second - 1] = iter->size; //запоминается новое значение
-					Arr[iter->second - 1][iter->first - 1] = iter->size;
+					Arr[iter->minVertex - 1][iter->maxVertex - 1] = iter->size; //запоминается новое значение
+					Arr[iter->maxVertex - 1][iter->minVertex - 1] = iter->size;
 					iter = graph.erase(iter);
 					cout << "Значение оставшегося ребра: " << del->size << "\n";
 					check = false;
 					break;
 				}
 				case '2':
-					while ((del->first != iter->first) && (del->second != iter->second)) //пока не найден первый элемент с нужными координатами
+					while ((del->minVertex != iter->minVertex) && (del->maxVertex != iter->maxVertex)) //пока не найден первый элемент с нужными координатами
 					{
 						++del;
 					} //итератор, указывающий на старое ребро
-					Arr[iter->first - 1][iter->second - 1] = del->size; //запоминается новое значение
-					Arr[iter->second - 1][iter->first - 1] = del->size;
+					Arr[iter->minVertex - 1][iter->maxVertex - 1] = del->size; //запоминается новое значение
+					Arr[iter->maxVertex - 1][iter->minVertex - 1] = del->size;
 					iter = graph.erase(iter);
 					cout << "Значение оставшегося ребра: " << del->size << "\n";
 					check = false;
@@ -93,8 +95,8 @@ void outputGraph(vector<edge>& graph, size_t N)
 		}
 		else
 		{
-			Arr[iter->first - 1][iter->second - 1] = iter->size;
-			Arr[iter->second - 1][iter->first - 1] = iter->size;
+			Arr[iter->minVertex - 1][iter->maxVertex - 1] = iter->size;
+			Arr[iter->maxVertex - 1][iter->minVertex - 1] = iter->size;
 		}
 		++iter;
 	} while (iter != graph.end());
@@ -134,15 +136,15 @@ bool connectivity(vector<edge>& graph, size_t& N)
 		do
 		{
 			//если текущая вершина меньше соединяемой
-			if ((iter->first - 1 == curr) && (Arr[iter->second - 1] == 0)) //если найдена нужная вершина
+			if ((iter->minVertex - 1 == curr) && (Arr[iter->maxVertex - 1] == 0)) //если найдена нужная вершина
 			{ //проверяем, с кем она связана и помечаем вторую, если она ещё не помечена
-				Arr[iter->second - 1] = 1;
+				Arr[iter->maxVertex - 1] = 1;
 			}
 
 			//если текущая вершина больше соединяемой
-			if ((iter->second - 1 == curr) && (Arr[iter->first - 1] == 0)) //если найдена нужная вершина
+			if ((iter->maxVertex - 1 == curr) && (Arr[iter->minVertex - 1] == 0)) //если найдена нужная вершина
 			{ //проверяем, с кем она связана и помечаем вторую, если она ещё не помечена
-				Arr[iter->first - 1] = 1;
+				Arr[iter->minVertex - 1] = 1;
 			}
 
 			++iter;
@@ -169,14 +171,14 @@ bool connectivity(vector<edge>& graph, size_t& N)
 	return 1;
 }
 
-bool delEdge(vector<edge>& graph, size_t first, size_t second)
+bool delEdge(vector<edge>& graph, size_t minVertex, size_t maxVertex)
 {
 	if (graph.empty()) { return 0; }
 	vector<edge>::iterator iter = graph.end();
 	do
 	{
 		iter--;
-		if (iter->first == first && iter->second == second)
+		if (iter->minVertex == minVertex && iter->maxVertex == maxVertex)
 		{
 			graph.erase(iter);
 			return 1;
@@ -204,7 +206,7 @@ void errorInput(char& sw)
 void inputUser(vector<edge>& graph, size_t& N)
 {
 	edge* newEdge = NULL; //создаваемое ребро
-	size_t first = 0, second = 0; //вершины
+	size_t minVertex = 0, maxVertex = 0; //вершины
 	int x; //вес ребра
 	string input; //ввод пользователем
 	char sw = '\0';
@@ -232,7 +234,7 @@ void inputUser(vector<edge>& graph, size_t& N)
 			if (sw == 'Y') { break; }
 			else { continue; }
 		}
-		else { first = x; }
+		else { minVertex = x; }
 
 		cin >> x;
 		if (!cin || x <= 0) //корректность ввода
@@ -242,10 +244,10 @@ void inputUser(vector<edge>& graph, size_t& N)
 			if (sw == 'Y') { break; }
 			else { continue; }
 		}
-		else { second = x; }
+		else { maxVertex = x; }
 		cin.ignore(32767, '\n'); //игнор лишних символов после числа, если они есть
 
-		if (first <= N && second <= N && first != second)
+		if (minVertex <= N && maxVertex <= N && minVertex != maxVertex)
 		{
 			cout << "Введите вес ребра: ";
 			cin >> x;
@@ -258,13 +260,13 @@ void inputUser(vector<edge>& graph, size_t& N)
 			}
 			if (x != 0)
 			{
-				swapVertex(first, second); //проверяем, чтобы первая вершина была меньше второе
-				newEdge = createEdge(first, second, x); //присваиваем указателю новое ребро
+				swapVertex(minVertex, maxVertex); //проверяем, чтобы первая вершина была меньше второе
+				newEdge = createEdge(minVertex, maxVertex, x); //присваиваем указателю новое ребро
 				if (newEdge != NULL) { graph.push_back(*newEdge); } //сохраняем его
 			}
 			else
 			{
-				if (delEdge(graph, first, second))
+				if (delEdge(graph, minVertex, maxVertex))
 				{
 					cout << "Ребро было удалено.\n";
 				}
@@ -425,8 +427,8 @@ void outputFile(vector<edge>& graph, size_t N)
 		vector<edge>::iterator iter = graph.begin(); //итератор, который перебирает весь список
 		do
 		{
-			Arr[iter->first - 1][iter->second - 1] = iter->size;
-			Arr[iter->second - 1][iter->first - 1] = iter->size;
+			Arr[iter->minVertex - 1][iter->maxVertex - 1] = iter->size;
+			Arr[iter->maxVertex - 1][iter->minVertex - 1] = iter->size;
 			++iter;
 		} while (iter != graph.end());
 
@@ -547,38 +549,38 @@ void searchTree(vector<edge>& graph, size_t N)
 	int m = 0; //самая большая существующая пометка
 	for (vector<edge>::iterator iter = graph.begin(); iter < graph.end(); iter++) //проходим каждое ребро
 	{
-		if ((Arr[iter->first - 1] == 0) && (Arr[iter->second - 1] == 0)) //если вершины не помечены
+		if ((Arr[iter->minVertex - 1] == 0) && (Arr[iter->maxVertex - 1] == 0)) //если вершины не помечены
 		{
 			tree.push_back(*iter); //запоминаем ребро в дереве
 			m++; //присваиваем метку, больше существующих
-			Arr[iter->first - 1] = m; //помечаем, что вершина в дереве
-			Arr[iter->second - 1] = m;
+			Arr[iter->minVertex - 1] = m; //помечаем, что вершина в дереве
+			Arr[iter->maxVertex - 1] = m;
 		}
 		else
 		{
-			if (Arr[iter->first - 1] != Arr[iter->second - 1]) //если вершины не принадлежат одной группе рёбер
+			if (Arr[iter->minVertex - 1] != Arr[iter->maxVertex - 1]) //если вершины не принадлежат одной группе рёбер
 			{
 				tree.push_back(*iter); //запоминаем ребро в дереве
-				if ((Arr[iter->first - 1] == 0) || (Arr[iter->second - 1] == 0)) //если одна из вершин не помечена
+				if ((Arr[iter->minVertex - 1] == 0) || (Arr[iter->maxVertex - 1] == 0)) //если одна из вершин не помечена
 				{
-					if (Arr[iter->first - 1] == 0) //выясняем, какая из вершин равна нулю
+					if (Arr[iter->minVertex - 1] == 0) //выясняем, какая из вершин равна нулю
 					{
-						Arr[iter->first - 1] = Arr[iter->second - 1]; //присваивается метка другого ребра
+						Arr[iter->minVertex - 1] = Arr[iter->maxVertex - 1]; //присваивается метка другого ребра
 					}
 					else
 					{
-						Arr[iter->second - 1] = Arr[iter->first - 1]; //присваивается метка другого ребра
+						Arr[iter->maxVertex - 1] = Arr[iter->minVertex - 1]; //присваивается метка другого ребра
 					}
 				}
 				else
 				{
-					if (Arr[iter->first - 1] < Arr[iter->second - 1]) //выясняем наименьшую метку
+					if (Arr[iter->minVertex - 1] < Arr[iter->maxVertex - 1]) //выясняем наименьшую метку
 					{
-						marksChange(Arr[iter->first - 1], Arr[iter->second - 1], m, Arr, N); //присваивается наименьшая метка
+						marksChange(Arr[iter->minVertex - 1], Arr[iter->maxVertex - 1], m, Arr, N); //присваивается наименьшая метка
 					}
 					else
 					{
-						marksChange(Arr[iter->second - 1], Arr[iter->first - 1], m, Arr, N); //присваивается наименьшая метка
+						marksChange(Arr[iter->maxVertex - 1], Arr[iter->minVertex - 1], m, Arr, N); //присваивается наименьшая метка
 					}
 				}
 			}
