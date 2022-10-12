@@ -61,14 +61,14 @@ int main()
 				{
 				case '1': //[1] Ввести граф самостоятельно
 					if (!graph.empty()) { graph.clear(); countVertices = 0; }
-					inputUser(graph, countVertices);
+					inputGraphByUser(graph, countVertices);
 					break;
 				case '2': //[2] Ввести количество вершин и соединить их случайно
 					generateGraphNew(graph, countVertices);
 					break;
 				case '3': //[3] Считать граф с файла
 					if (!graph.empty()) { graph.clear(); countVertices = 0; }
-					inputFile(graph, countVertices);
+					inputGraphByFile(graph, countVertices);
 					break;
 				case '0': //[0] Назад
 					break;

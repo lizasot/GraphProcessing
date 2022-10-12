@@ -8,6 +8,6 @@ struct edge
 	int size;
 };
 
-void swapVertex(size_t& first, size_t& second);
+void sortVertex(size_t& first, size_t& second);
 
 edge* createEdge(size_t first, size_t second, int size);

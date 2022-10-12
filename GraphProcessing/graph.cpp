@@ -175,12 +175,12 @@ void errorInput(char& sw)
 	endInputEdge(sw);
 }
 
-void inputUser(vector<edge>& graph, size_t& N)
+void inputGraphByUser(vector<edge>& graph, size_t& N)
 {
-	edge* newEdge = NULL; //создаваемое ребро
-	size_t minVertex = 0, maxVertex = 0; //вершины
-	int x; //вес ребра
-	string input; //ввод пользователем
+	edge* newEdge = NULL;
+	size_t minVertex = 0, maxVertex = 0;
+	int x;
+	string input;
 	char sw = '\0';
 	cout << "Введите количество вершин: ";
 	while (!(cin >> x) || (x <= 0)) //проверка на корректность ввода
@@ -194,7 +194,7 @@ void inputUser(vector<edge>& graph, size_t& N)
 	cin.ignore(32767, '\n'); //игнор лишних символов после числа, если они есть
 	N = x;
 
-	getGraphAsString(graph, N); //вывод пустого графа
+	cout << getGraphAsString(graph, N); //вывод пустого графа
 
 	while (sw != 'Y') {
 		cout << "Введите две вершины, которые ребро соединяет (например, 1 2): ";
@@ -232,7 +232,7 @@ void inputUser(vector<edge>& graph, size_t& N)
 			}
 			if (x != 0)
 			{
-				swapVertex(minVertex, maxVertex); //проверяем, чтобы первая вершина была меньше второе
+				sortVertex(minVertex, maxVertex); //первая вершина должна быть меньше второй
 				newEdge = createEdge(minVertex, maxVertex, x); //присваиваем указателю новое ребро
 				if (newEdge != NULL) { graph.push_back(*newEdge); } //сохраняем его
 			}
@@ -273,27 +273,26 @@ void inputUser(vector<edge>& graph, size_t& N)
 
 size_t countRows()
 {
+	size_t countRows = 0;
 	ifstream fin("graph.txt");
 	if (fin.is_open())
 	{
-		size_t temp = 0; //количество строк
 		string data;
-		while (!fin.eof()) //пока указатель потока не достигнет конца файла
+		while (!fin.eof())
 		{
 			getline(fin, data); //считывается строка
-			if (data != "\0") { temp++; } //в счётчик не попадают пустые строки
+			if (data != "\0") { countRows++; } //в счётчик не попадают пустые строки
 		}
 		fin.close();
-		return temp;
 	}
-	else return 0;
+	return countRows;
 }
 
-void inputFile(vector<edge>& graph, size_t& N)
+void inputGraphByFile(vector<edge>& graph, size_t& N)
 {
 	ifstream fin("graph.txt");
-	if (!fin.is_open()) // если файл не открыт
-		cout << "Файл не был открыт.\n"; // сообщить об этом
+	if (!fin.is_open()) 
+		cout << "Файл не был открыт.\n"; 
 	else
 	{
 		N = countRows();
@@ -301,48 +300,51 @@ void inputFile(vector<edge>& graph, size_t& N)
 		if (N == 0) { cout << "Файл пуст.\n"; }
 		else
 		{
-			edge* newEdge = NULL; //создаваемое ребро
-			//string data; // буфер промежуточного хранения считываемого из файла текста
+			edge* newEdge = NULL;
 			int** gr = new int* [N];
-			for (size_t i = 0; i < N; ++i) { gr[i] = new int[N](); } //создаём двумерный массив
+			for (size_t i = 0; i < N; ++i) { gr[i] = new int[N](); }
 
 			for (size_t i = 0; i < N; i++)
 			{
-				//getline(fin, data); // Считываем очередную строчку
 				for (size_t j = 0; j < N; j++)
 				{
 					fin >> gr[i][j];
-					if (!fin) //корректность ввода
+					if (!fin)
 					{
-						cout << "\nОшибка! Файл содержит некорректные значения.\n";
-						return;
+						throw invalid_argument("Файл содержит некорректные значения.");
 					}
 				}
-				if (gr[i][i] != 0) { cout << "Ошибка! Главная диагональ матрицы должна содержать только нулевые значения.\n"; return; }
+				if (gr[i][i] != 0) 
+				{ 
+					throw invalid_argument("Главная диагональ матрицы должна содержать только нулевые значения.");
+				}
 			}
 
 			for (size_t i = 0; i < N; i++)
 			{
 				for (size_t j = 1 + i; j < N; j++)
 				{
-					if (gr[i][j] != gr[j][i]) { cout << "\nОшибка! Вес одного ребра имеет разные значения.\n"; return; }
+					if (gr[i][j] != gr[j][i]) 
+					{
+						throw invalid_argument("Вес одного ребра имеет разные значения.");
+					}
 					else
 					{
 						if (gr[i][j] != 0)
 						{
-							newEdge = createEdge(i + 1, j + 1, gr[i][j]); //присваиваем указателю новое ребро
-							if (newEdge != NULL) { graph.push_back(*newEdge); } //сохраняем его
+							newEdge = createEdge(i + 1, j + 1, gr[i][j]);
+							if (newEdge != NULL) { graph.push_back(*newEdge); }
 						}
 					}
 				}
 			}
-			if (!graph.empty() && connectivity(graph, N)) //если граф получился связным
+			if (!graph.empty() && connectivity(graph, N))
 			{
-				cout << "Граф был успешно создан\n";
+				cout << "Граф был успешно создан.\n";
 			}
 			else
 			{
-				cout << "Граф не прошёл проверку на связность, поэтому был удалён\n";
+				cout << "Граф не прошёл проверку на связность, поэтому был удалён.\n";
 				if (!graph.empty()) { graph.clear(); N = 0; }
 			}
 
@@ -365,7 +367,7 @@ void inputFile(vector<edge>& graph, size_t& N)
 					getGraphAsString(graph, N);
 					break;
 				default:
-					cout << "Вы ввели некорректное значение. Повторите снова\n";
+					cout << "Вы ввели некорректное значение. Повторите снова.\n";
 					break;
 				}
 			} while (chk);

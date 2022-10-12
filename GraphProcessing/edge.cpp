@@ -1,6 +1,6 @@
 #include "edge.h"
 
-void swapVertex(size_t& first, size_t& second)
+void sortVertex(size_t& first, size_t& second)
 {
 	if (first < second) { return; } //если первая вершина меньше второй - всё ок
 	size_t c = first;

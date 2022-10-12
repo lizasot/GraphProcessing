@@ -20,11 +20,11 @@ void endInputEdge(char& sw);
 
 void errorInput(char& sw);
 
-void inputUser(vector<edge>& graph, size_t& N);
+void inputGraphByUser(vector<edge>& graph, size_t& N);
 
 size_t countRows();
 
-void inputFile(vector<edge>& graph, size_t& N);
+void inputGraphByFile(vector<edge>& graph, size_t& N);
 
 void outputFile(vector<edge>& graph, size_t N);
 
