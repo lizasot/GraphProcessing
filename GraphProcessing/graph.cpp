@@ -2,197 +2,169 @@
 
 string getEdgeList(vector<edge>& graph)
 {
-	string str;
-	if (graph.empty()) { str = "Список рёбер пуст.\n"; }
-	vector<edge>::iterator iter = graph.begin(); //итератор, который перебирает весь список
-	size_t i = 0;
-	do
+	string str = "";
+	if (graph.empty()) 
+	{ 
+		str = "Список рёбер пуст.\n"; 
+	}
+	else
 	{
-		str += i + 1 + ". Ребро между " + iter->minVertex + " и " + iter->maxVertex + " имеет вес " + iter->size + ".\n";
-		i++;
-		++iter;
-	} while (iter != graph.end());
+		vector<edge>::iterator iter = graph.begin();
+		size_t i = 0;
+		while (iter != graph.end())
+		{
+			str += to_string(i + 1) + ". Ребро между ";
+			str += to_string(iter->minVertex) + " и " + to_string(iter->maxVertex);
+			str += " имеет вес " + to_string(iter->size) + ".\n";
+			i++;
+			++iter;
+		}
+	}
 	return str;
 }
 
-bool compareSize(edge item1, edge item2)
+string getGraphAsString(vector<edge>& graph, size_t N)
 {
-	return (item1.size < item2.size);
-}
-
-void outputGraph(vector<edge>& graph, size_t N)
-{
-	if (N <= 0) { cout << "Граф пуст.\n"; }
-
-	if (graph.empty())
+	string graphStr = "";
+	if (N <= 0) 
+	{ 
+		graphStr = "Граф пуст.\n";
+	}
+	else
 	{
-		for (size_t i = 0; i < N; i++)
+		if (graph.empty())
 		{
-			for (size_t j = 0; j < N; j++)
+			for (size_t i = 0; i < N; i++)
 			{
-				cout << "0 ";
+				for (size_t j = 0; j < N; j++)
+				{
+					graphStr += "0 ";
+				}
+				graphStr += "\n";
 			}
-			cout << "\n";
-		}
-		return;
-	}
-
-	int** Arr = new int* [N];
-	for (size_t i = 0; i < N; ++i)
-	{
-		Arr[i] = new int[N]();
-	}
-
-	vector<edge>::iterator iter = graph.begin();
-	do
-	{
-		if (Arr[iter->minVertex - 1][iter->maxVertex - 1] != 0) //если записываемое ребро уже встречалось - ошибка
-		{
-			char sw = '\0'; //для команды пользователя
-			bool check = true; //для выхода из меню с удалением
-			vector<edge>::iterator del = graph.begin(); //итератор, ссылающийся на удаляемое ребро
-			do
-			{
-				cout << "Встречены повторяющиеся рёбра между вершинами " << iter->minVertex << " и " << iter->maxVertex << ". Какое значение удалить?\n";
-				cout << "\x1b[32m[1]\x1b[0m " << Arr[iter->minVertex - 1][iter->maxVertex - 1] << "\n"; //значение старого ребра
-				cout << "\x1b[32m[2]\x1b[0m " << iter->size << "\n"; //значение нового ребра
-
-				cin >> sw;
-				while (cin.get() != '\n') { sw = ' '; }; //если строка содержит более одного символа, возвращается ошибка
-				switch (sw)
-				{
-				case '1':
-				{
-					while ((del->minVertex != iter->minVertex) && (del->maxVertex != iter->maxVertex)) //пока не найден первый элемент с нужными координатами
-					{
-						++del;
-					} //итератор, указывающий на старое ребро
-					del->size = iter->size; //"удаляемое" ребро присваивает значение нового
-					Arr[iter->minVertex - 1][iter->maxVertex - 1] = iter->size; //запоминается новое значение
-					Arr[iter->maxVertex - 1][iter->minVertex - 1] = iter->size;
-					iter = graph.erase(iter);
-					cout << "Значение оставшегося ребра: " << del->size << "\n";
-					check = false;
-					break;
-				}
-				case '2':
-					while ((del->minVertex != iter->minVertex) && (del->maxVertex != iter->maxVertex)) //пока не найден первый элемент с нужными координатами
-					{
-						++del;
-					} //итератор, указывающий на старое ребро
-					Arr[iter->minVertex - 1][iter->maxVertex - 1] = del->size; //запоминается новое значение
-					Arr[iter->maxVertex - 1][iter->minVertex - 1] = del->size;
-					iter = graph.erase(iter);
-					cout << "Значение оставшегося ребра: " << del->size << "\n";
-					check = false;
-					break;
-				default:
-					cout << "Некорректный ввод! Пожалуйста, попробуйте снова\n";
-					break;
-				}
-			} while (check);
-			if (iter == graph.end()) { break; }
 		}
 		else
 		{
-			Arr[iter->minVertex - 1][iter->maxVertex - 1] = iter->size;
-			Arr[iter->maxVertex - 1][iter->minVertex - 1] = iter->size;
-		}
-		++iter;
-	} while (iter != graph.end());
+			int** Arr = new int* [N];
+			for (size_t i = 0; i < N; ++i)
+			{
+				Arr[i] = new int[N]();
+			}
 
-	//вывод
-	for (size_t i = 0; i < N; i++)
-	{
-		for (size_t j = 0; j < N; j++)
-		{
-			cout << Arr[i][j] << " ";
-		}
-		cout << "\n";
-	}
+			vector<edge>::iterator currentEdge = graph.begin();
+			while (currentEdge != graph.end())
+			{
+				if (Arr[currentEdge->minVertex - 1][currentEdge->maxVertex - 1] != 0)
+				{
+					string errorMsg = "Встречены повторяющиеся рёбра между вершинами ";
+					errorMsg += to_string(currentEdge->minVertex) + " и " + to_string(currentEdge->maxVertex) + ".";
+					for (size_t i = 0; i < N; ++i)
+					{
+						delete[] Arr[i];
+					}
+					delete[] Arr;
+					throw errorMsg;
+				}
+				else
+				{
+					Arr[currentEdge->minVertex - 1][currentEdge->maxVertex - 1] = currentEdge->size;
+					Arr[currentEdge->maxVertex - 1][currentEdge->minVertex - 1] = currentEdge->size;
+				}
+				++currentEdge;
+			}
 
-	for (size_t i = 0; i < N; ++i)
-	{
-		delete[] Arr[i];
+			for (size_t i = 0; i < N; i++)
+			{
+				for (size_t j = 0; j < N; j++)
+				{
+					graphStr += to_string(Arr[i][j]) + " ";
+				}
+				graphStr += "\n";
+			}
+			for (size_t i = 0; i < N; ++i)
+			{
+				delete[] Arr[i];
+			}
+			delete[] Arr;
+		}
 	}
-	delete[] Arr; //удаляем двумерный массив
+	return graphStr;
 }
 
 bool connectivity(vector<edge>& graph, size_t& N)
 {
-	if (N <= 1 || graph.empty()) { return 0; }
-	if (N == 2 && !(graph.empty())) { return 1; } //если имеется всего две вершины и одно ребро между ними
-
-	//далее идёт алгоритм, если есть хотя бы 3 вершины
-	bool check = true; //проверяет, есть ли в массиве хотя бы один элемент с пометкой "1"
-	int* Arr = new int[N](); //по умолчанию все вершины имеют пометку "0"
-	size_t curr = 0; //рассматриваемая вершина - 1
-	vector<edge>::iterator iter = graph.begin(); //итератор графа
-	Arr[0] = 1;
-	do
+	bool connectivity = false;
+	if (N == 2 && !(graph.empty()))
+	{ 
+		connectivity = true; //если имеется всего две вершины и одно ребро между ними
+	}
+	else if (N >= 3 && !(graph.empty()))
 	{
-		Arr[curr] = 2;
-		iter = graph.begin();
-		do
+		bool hasOne = true; //есть ли в массиве элемент с пометкой "1"
+		int* Arr = new int[N]();
+		size_t currentVertex = 0;
+		vector<edge>::iterator currentEdge = graph.begin();
+		Arr[0] = 1;
+		while (hasOne)
 		{
-			//если текущая вершина меньше соединяемой
-			if ((iter->minVertex - 1 == curr) && (Arr[iter->maxVertex - 1] == 0)) //если найдена нужная вершина
-			{ //проверяем, с кем она связана и помечаем вторую, если она ещё не помечена
-				Arr[iter->maxVertex - 1] = 1;
+			Arr[currentVertex] = 2;
+			currentEdge = graph.begin();
+			do
+			{
+				//если текущая вершина меньше соединяемой
+				if ((currentEdge->minVertex - 1 == currentVertex) && (Arr[currentEdge->maxVertex - 1] == 0)) //если найдена нужная вершина
+				{ //проверяем, с кем она связана и помечаем вторую, если она ещё не помечена
+					Arr[currentEdge->maxVertex - 1] = 1;
+				}
+
+				//если текущая вершина больше соединяемой
+				if ((currentEdge->maxVertex - 1 == currentVertex) && (Arr[currentEdge->minVertex - 1] == 0)) //если найдена нужная вершина
+				{ //проверяем, с кем она связана и помечаем вторую, если она ещё не помечена
+					Arr[currentEdge->minVertex - 1] = 1;
+				}
+
+				++currentEdge;
+			} while (currentEdge != graph.end()); //пока не просмотрены все рёбра
+
+			hasOne = false;
+			for (size_t i = 0; i < N; i++)
+			{
+				if (Arr[i] == 1)
+				{
+					currentVertex = i;
+					hasOne = true;
+					break;
+				}
 			}
+		}
 
-			//если текущая вершина больше соединяемой
-			if ((iter->maxVertex - 1 == curr) && (Arr[iter->minVertex - 1] == 0)) //если найдена нужная вершина
-			{ //проверяем, с кем она связана и помечаем вторую, если она ещё не помечена
-				Arr[iter->minVertex - 1] = 1;
-			}
-
-			++iter;
-		} while (iter != graph.end()); //пока не просмотрены все рёбра
-
-		check = false;
+		//если остались вершин, помеченные "0", то граф несвязный
 		for (size_t i = 0; i < N; i++)
 		{
-			if (Arr[i] == 1)
+			if (Arr[i] == 0) { connectivity = false; }
+		}
+		delete[] Arr;
+	}
+	return connectivity;
+}
+
+bool deleteEdge(vector<edge>& graph, size_t minVertex, size_t maxVertex)
+{
+	bool sucess = false;
+	if (!graph.empty()) 
+	{
+		vector<edge>::iterator iter = graph.end();
+		while (iter != graph.begin())
+		{
+			iter--;
+			if (iter->minVertex == minVertex && iter->maxVertex == maxVertex)
 			{
-				curr = i;
-				check = true;
-				break;
+				graph.erase(iter);
+				sucess = true;
 			}
 		}
-	} while (check);
-
-	//если остались вершин, помеченные "0", то граф несвязный
-	for (size_t i = 0; i < N; i++)
-	{
-		if (Arr[i] == 0) { delete[] Arr; return 0; }
 	}
-	delete[] Arr;
-	return 1;
-}
-
-bool delEdge(vector<edge>& graph, size_t minVertex, size_t maxVertex)
-{
-	if (graph.empty()) { return 0; }
-	vector<edge>::iterator iter = graph.end();
-	do
-	{
-		iter--;
-		if (iter->minVertex == minVertex && iter->maxVertex == maxVertex)
-		{
-			graph.erase(iter);
-			return 1;
-		}
-	} while (iter != graph.begin());
-
-	return 0;
-}
-
-void endInputEdge(char& sw)
-{
-	cout << "Введите 'Y', если хотите завершить создание графа\n";
-	cin >> sw;
-	while (cin.get() != '\n') { sw = ' '; }; //если строка содержит более одного символа, присваивается пробел
+	return sucess;
 }
 
 void errorInput(char& sw)
@@ -222,7 +194,7 @@ void inputUser(vector<edge>& graph, size_t& N)
 	cin.ignore(32767, '\n'); //игнор лишних символов после числа, если они есть
 	N = x;
 
-	outputGraph(graph, N); //вывод пустого графа
+	getGraphAsString(graph, N); //вывод пустого графа
 
 	while (sw != 'Y') {
 		cout << "Введите две вершины, которые ребро соединяет (например, 1 2): ";
@@ -266,7 +238,7 @@ void inputUser(vector<edge>& graph, size_t& N)
 			}
 			else
 			{
-				if (delEdge(graph, minVertex, maxVertex))
+				if (deleteEdge(graph, minVertex, maxVertex))
 				{
 					cout << "Ребро было удалено.\n";
 				}
@@ -283,7 +255,7 @@ void inputUser(vector<edge>& graph, size_t& N)
 			if (sw == 'Y') { break; }
 			else { continue; }
 		}
-		outputGraph(graph, N);
+		getGraphAsString(graph, N);
 		endInputEdge(sw);
 	}
 
@@ -390,7 +362,7 @@ void inputFile(vector<edge>& graph, size_t& N)
 					chk = false;
 					break;
 				case '1':
-					outputGraph(graph, N);
+					getGraphAsString(graph, N);
 					break;
 				default:
 					cout << "Вы ввели некорректное значение. Повторите снова\n";
@@ -508,7 +480,7 @@ void generateGraphNew(vector<edge>& graph, size_t& N)
 			chk = false;
 			break;
 		case '1':
-			outputGraph(graph, N);
+			getGraphAsString(graph, N);
 			break;
 		case '2':
 			outputFile(graph, N);
@@ -536,7 +508,11 @@ void marksChange(int min, int max, int& m, int*& Arr, size_t& N)
 	}
 }
 
-//Поиск минимального остовного дерева
+bool compareSize(edge item1, edge item2)
+{
+	return (item1.size < item2.size);
+}
+
 void searchTree(vector<edge>& graph, size_t N)
 {
 	vector<edge> tree(NULL); //список рёбер итогового дерева
@@ -611,7 +587,7 @@ void searchTreeTime(vector<edge> graph, size_t N)
 	end = clock();
 
 	cout << "Минимальное остовное дерево: \n";
-	outputGraph(graph, N);
+	getGraphAsString(graph, N);
 	cout << "Найдено за: " << ((double)end - start) / ((double)CLOCKS_PER_SEC) << "\n";
 	return;
 }

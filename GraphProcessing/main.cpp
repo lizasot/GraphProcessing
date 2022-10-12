@@ -10,6 +10,13 @@
 
 using namespace std;
 
+void endInputEdge(char& sw)
+{
+	cout << "Введите 'Y', если хотите завершить создание графа\n";
+	cin >> sw;
+	while (cin.get() != '\n') { sw = ' '; }; //если строка содержит более одного символа, присваивается пробел
+}
+
 int main()
 {
 	setlocale(0, "");
@@ -129,7 +136,7 @@ int main()
 					{
 						searchTree(graph, countVertices);
 						cout << "Минимальное остовное дерево: \n";
-						outputGraph(graph, countVertices);
+						cout << getGraphAsString(graph, countVertices);
 					}
 					else { cout << "Ошибка! Граф пуст.\n"; }
 					break;
@@ -148,12 +155,12 @@ int main()
 			break;
 
 		case '4': //[4] Вывести список рёбер
-			if (!graph.empty()) { getEdgeList(graph); }
+			if (!graph.empty()) { cout << getEdgeList(graph); }
 			else { cout << "Ошибка! Граф пуст.\n"; }
 			break;
 
 		case '5': //[5] Вывод текущего графа
-			if (!graph.empty()) { outputGraph(graph, countVertices); }
+			if (!graph.empty()) { cout << getGraphAsString(graph, countVertices); }
 			else { cout << "Ошибка! Граф пуст.\n"; }
 			break;
 
