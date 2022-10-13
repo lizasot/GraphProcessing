@@ -93,7 +93,7 @@ string getGraphAsString(vector<edge>& graph, size_t N)
 
 bool connectivity(vector<edge>& graph, size_t& N)
 {
-	bool connectivity = false;
+	bool connectivity = true;
 	if (N == 2 && !(graph.empty()))
 	{ 
 		connectivity = true; //если имеется всего две вершины и одно ребро между ними
@@ -144,6 +144,10 @@ bool connectivity(vector<edge>& graph, size_t& N)
 			if (Arr[i] == 0) { connectivity = false; }
 		}
 		delete[] Arr;
+	}
+	else
+	{
+		connectivity = false;
 	}
 	return connectivity;
 }
@@ -364,7 +368,7 @@ void inputGraphByFile(vector<edge>& graph, size_t& N)
 					chk = false;
 					break;
 				case '1':
-					getGraphAsString(graph, N);
+					cout << getGraphAsString(graph, N);
 					break;
 				default:
 					cout << "Вы ввели некорректное значение. Повторите снова.\n";
@@ -482,7 +486,7 @@ void generateGraphNew(vector<edge>& graph, size_t& N)
 			chk = false;
 			break;
 		case '1':
-			getGraphAsString(graph, N);
+			cout << getGraphAsString(graph, N);
 			break;
 		case '2':
 			outputFile(graph, N);
